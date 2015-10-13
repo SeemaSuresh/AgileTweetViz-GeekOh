@@ -46,7 +46,7 @@ class TweetVizFileReaderWriter(object):
     def file_name(self):
         return self._file_name
 
-    @property.setter
+    @file_name.setter
     def file_name(self, value):
         self._file_name = value
 
@@ -54,7 +54,7 @@ class TweetVizFileReaderWriter(object):
     def tweet_table(self):
         return self._tweet_table
 
-    @property.setter
+    @tweet_table.setter
     def tweet_table(self, value):
         self._tweet_table = value
 
@@ -106,7 +106,7 @@ class TweetVizFileReaderWriter(object):
         try:
             if self._file_name is not None and self._tweet_table is not None:
                 if self._tweet_table.__len__() > 0:
-                    file_content = 'Search_Category\tTweeter_Handle\tTweet_Message\tTweet_DateTime\tTweet_Location\tNumber_Of_Retweets\tNumber_Of_Favorites\n'
+                    file_content = 'Search_Category\tTweeter_Hashtag\tTweet_Message\tTweeter_Handle\tTweet_Message\tTweet_Datetime\tTweet_Location\tTweet_RetweetCount\tTweet_FavoriteCount\n'
                     for row in self._tweet_table:
                         columns = ''
                         for column in row:

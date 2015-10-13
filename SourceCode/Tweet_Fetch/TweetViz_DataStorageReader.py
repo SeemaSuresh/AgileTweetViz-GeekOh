@@ -15,11 +15,13 @@ import ConfigParser
 
 
 class TweetVizDataStorageReader(object):
+    '''
+    This is the main class which is responsible for data storage and data loading from stored places.
+    This is a singleton class
+    '''
     __metaclass__ = TweetVizSingleton
 
     def __init__(self):
-        self._file_handler = None
-        self._offline = False
         self._user_name = None
         self._password = None
         self._host = None
@@ -28,19 +30,12 @@ class TweetVizDataStorageReader(object):
         self._log_level = 0
         pass
 
-    @property
-    def offline(self):
-        return self._offline
-
-    @property.setter
-    def offine(self, value):
-        self._offline = value
-
-    @property
-    def file_handler(self):
-        return self._file_handler
-
     def connect_to_db(self):
+        '''
+        This function will connect to the database using the db crendentials. Once connected it will return the
+        connector which can be used to do db operations.
+        :return: Mysql connector
+        '''
         connect = None
         try:
             connect = mysql.connector.connect(user=self._user_name, password=self._password, host=self._host, database=self._database)
@@ -51,6 +46,11 @@ class TweetVizDataStorageReader(object):
         return connect
 
     def disconnect_from_db(self, connect):
+        '''
+        This function will disconnect from the database.
+        :param connect: Connector whose connection has to be closed
+        :return: -
+        '''
         if connect is not None:
             connect.close()
             connect = None
@@ -58,6 +58,10 @@ class TweetVizDataStorageReader(object):
 
 
     def read_configuration_file(self):
+        '''
+        This function will read the configuration file to get the configuraiton informations like DB connection info
+        :return: -
+        '''
         config = None
         return_value = 0
         cipher = None
@@ -70,17 +74,18 @@ class TweetVizDataStorageReader(object):
             self._password = cipher.decrypt(config.get('TweetVizDB', 'Password'))
             self._host = config.get('TweetVizDB', 'Host')
 
-            if config.get('TweetVizCommon', 'FileBased').lower() == 'true':
-                self._offline = True
-
             self._file_storage = config.get('TweetVizCommon', 'FileMemory')
 
         finally:
             config = None
         return return_value
 
-    # Search_Category\tTweeter_Handle\tTweet_Message\tTweet_DateTime\tTweet_Location\tNumber_Of_Retweets\tNumber_Of_Favorites\n
+    # Search_Category\tTweeter_Hashtag\tTweeter_Handle\tTweet_Message\tTweet_DateTime\tTweet_Location\tTweet_RetweetCount\tTweet_FavoriteCount\n
     def read_full_details_from_db(self):
+        '''
+        This function will read the tweets stored in sql table. Then forms a table and returns it.
+        :return:Data present in the tweet_repository table.
+        '''
         query = None
         connect = None
         cursor = None
@@ -96,19 +101,20 @@ class TweetVizDataStorageReader(object):
                     # An error has occured log error
                     cursor = None
                 else:
-                    query = ("SELECT SEARCH_CATEGORY, TWEETER_HANDLE, TWEET_MESSAGE, TWEET_DATETIME, TWEET_LOCATION, NUMBER_OF_TWEETS, NUMBER_OF_FAVORITES FROM TWEETVIZDB.TWEETS_TABLE")
+                    query = ("SELECT Search_Category, Tweeter_Hashtag, Tweeter_Handle, Tweet_Message, Tweet_Datetime, Tweet_Location, Tweet_RetweetCount, Tweet_FavoriteCount FROM TweetViz_DB.tweet_repository")
 
                     cursor.execute(query)
                     row = []
 
-                    for (search_category, tweeter_handle, tweet_message, tweet_datetime, tweet_location, no_of_retweets, no_of_favorites) in cursor:
-                        row.append(search_category)
-                        row.append(tweeter_handle)
-                        row.append(tweet_message)
-                        row.append(tweet_datetime)
-                        row.append(tweet_location)
-                        row.append(no_of_retweets)
-                        row.append(no_of_favorites)
+                    for (Search_Category, Tweeter_Hashtag, Tweeter_Handle, Tweet_Message, Tweet_Datetime, Tweet_Location, Tweet_RetweetCount, Tweet_FavoriteCount) in cursor:
+                        row.append(Search_Category)
+                        row.append(Tweeter_Hashtag)
+                        row.append(Tweeter_Handle)
+                        row.append(Tweet_Message)
+                        row.append(Tweet_Datetime)
+                        row.append(Tweet_Location)
+                        row.append(Tweet_RetweetCount)
+                        row.append(Tweet_FavoriteCount)
                         table_data.append(row)
 
                     cursor.close()
@@ -125,6 +131,10 @@ class TweetVizDataStorageReader(object):
         return table_data
 
     def read_from_file(self):
+        '''
+        This function will used the TweetVizFileReaderWriter class to read the tweets from a file.
+        :return: table containing tweets. Table structure is same as sql tweet_reqpository table.
+        '''
         table_data = None
         file_handler = None
         try:
@@ -135,6 +145,12 @@ class TweetVizDataStorageReader(object):
         return table_data
 
     def write_to_file(self, table_data):
+        '''
+        This function will be used to create a file containing tweet information. It uses
+        TweetVizFileReaderWriter class to do this function.
+        :param table_data: table structure is similar to sql tweet_repository table. It contains tweets information
+        :return:
+        '''
         file_handler = None
         try:
             if table_data is not None and table_data.__len__() > 0:
@@ -142,8 +158,14 @@ class TweetVizDataStorageReader(object):
                 file_handler.write_file()
         finally:
             file_handler = None
+        pass
 
     def insert_data_to_db(self, table_data):
+        '''
+        This function will write the tweets into the DB table tweet_repository.
+        :param table_data: Table containing tweets information. Its structure is similar to tweet_repository table.
+        :return:
+        '''
         connect = None
         cursor = None
         return_value = 0
@@ -152,20 +174,21 @@ class TweetVizDataStorageReader(object):
             cursor = connect.cursor()
 
             # search_category, tweeter_handle, tweet_message, tweet_datetime, tweet_location, no_of_retweets
-            insert_tweet_query = ("INSERT INTO TWEETVIZ.TWEET_TABLE "
-                            "(search_category, tweeter_handle, tweet_message, tweet_datetime, tweet_location, no_of_retweets, no_of_favorites) "
-                            "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+            insert_tweet_query = ("INSERT INTO TweetViz_DB.tweet_repository "
+                            "(Search_Category, tweeter_handle, tweet_message, tweet_datetime, tweet_location, no_of_retweets, no_of_favorites) "
+                            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
 
             for row in table_data:
-                search_category = row[0]
-                tweeter_handle = row[1]
-                tweet_message = row[2]
-                tweet_datetime = row[3]
-                tweet_location = row[4]
-                no_of_retweets = row[5]
-                no_of_favorites = row[6]
+                Search_Category = row[0]
+                Tweeter_Hashtag = row[1]
+                Tweeter_Handle = row[2]
+                Tweet_Message = row[3]
+                Tweet_Datetime = row[4]
+                Tweet_Location = row[5]
+                Tweet_RetweetCount = row[6]
+                Tweet_FavoriteCount = row[7]
 
-                insert_tweet_data = (search_category, tweeter_handle, tweet_message, tweet_datetime,tweet_location, no_of_retweets, no_of_favorites)
+                insert_tweet_data = (Search_Category, Tweeter_Hashtag, Tweeter_Handle, Tweet_Message,Tweet_Datetime, Tweet_Location, Tweet_RetweetCount, Tweet_FavoriteCount)
 
                 cursor.execute(insert_tweet_query, insert_tweet_data)
 
@@ -183,6 +206,12 @@ class TweetVizDataStorageReader(object):
         return return_value
 
     def call_stored_procedure(self, table_data):
+        '''
+        This function is currently not used. Calling of stored procedure is not known yet. Like calling a stored
+        procedure with table as input. Rather we will be using above insert_data_to_db function to do the work.
+        :param table_data: Tweet information to be stored in db.
+        :return: success of failure.
+        '''
         connect = None
         cursor = None
         return_value = 0
@@ -210,5 +239,4 @@ class TweetVizDataStorageReader(object):
                 connect.close()
                 connect = None
         return return_value
-        pass
 
