@@ -1,23 +1,18 @@
 import tweepy
+import sys
 
-consumer_key = 'WQGD1vxJe2COJntOcbq1L7ydH'
-consumer_secret = 'O6MiuVHUpAgHwBEpsOyzSSfNMvIFdsAX0xhmOrmhKmrDnzxYUo'
+class TweetFetcher:
+	def __init__(self, consumer_key, consumer_secret):
+		self.consumer_key = consumer_key
+		self.consumer_secret = consumer_secret
+		self.auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+		self.api = tweepy.API(self.auth)
 
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_key, access_secret)
-
-api = tweepy.API(auth)
-
-return_result = api.search("#asu")
-
-for results in return_result:
-	print results.text
-#public_tweets = api.home_timeline()
-
-#user = api.get_user('gowthamnayak7')
-#print user.followers_count
-
-#for friend in user.friends():
-#	print friend.screen_name
-#for tweet in public_tweets:
-#	print tweet.text
+	def get_tweets(self, parsed_hashtags):
+		hashtag_count = len(parsed_hashtags)
+		'an implememtation to handle multiple hashtags'
+		for tags in parsed_hashtags:
+			return_result = self.api.search(tags)
+			print tags
+			for tweets in return_result:
+				print tweets.text
