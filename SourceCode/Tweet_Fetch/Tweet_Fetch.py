@@ -1,3 +1,7 @@
+'''
+Developer Gowtham
+Date 12 OCT 2015
+'''
 import tweepy
 import sys
 
