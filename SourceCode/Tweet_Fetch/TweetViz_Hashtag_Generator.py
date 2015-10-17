@@ -119,17 +119,31 @@ class TweetVizHashTagGenerator(object):
         :return: list of hash tags
         '''
         hashtag_list = []
+        final_hashtag_list = []
         if self._userstatement is not None and self._userstatement.__len__() > 0:
             temp_list = self.extract()
 
-            temp_sent = self._userstatement.replace(' ', '')
-            hashtag_list.append(temp_sent)
-
             for string in temp_list:
                 temp_sent = string.replace(' ', '')
+                temp_sent = '#'+temp_sent
                 hashtag_list.append(temp_sent)
 
-        return hashtag_list
+            not_include_list = []
+            for string in hashtag_list:
+                final_hashtag_list.append(string)
+                for otherhash in hashtag_list:
+                    if otherhash != string:
+                        temp_hash = string + ' ' + otherhash
+                        inverse_hash = otherhash + ' ' + string
+                        if not not_include_list.__contains__(temp_hash):
+                            final_hashtag_list.append(temp_hash)
+                            not_include_list.append(inverse_hash)
+
+            temp_sent = '#' + self._userstatement.replace(' ', '')
+            if not final_hashtag_list.__contains__(temp_sent):
+                final_hashtag_list.append(temp_sent)
+
+        return final_hashtag_list
 
 '''
 # Main method, just run "python np_extractor.py"

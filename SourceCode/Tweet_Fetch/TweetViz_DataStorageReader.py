@@ -67,9 +67,11 @@ class TweetVizDataStorageReader(object):
         cipher = None
         try:
             config = ConfigParser.ConfigParser()
+            config.read("TweetViz_ConfigFile.ini")
             self._database = config.get('TweetVizDB', 'Database')
             self._user_name = config.get('TweetVizDB', 'User')
-            cipher = TweetVizAESCipher()
+            cipher = TweetVizAESCipher('GeekOEncrypt1')
+            # text = cipher.encrypt('Passionate79*')
 
             self._password = cipher.decrypt(config.get('TweetVizDB', 'Password'))
             self._host = config.get('TweetVizDB', 'Host')

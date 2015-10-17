@@ -7,6 +7,7 @@ Reference: http://stackoverflow.com/questions/6760685/creating-a-singleton-in-py
 '''
 
 import base64
+import hashlib
 from Crypto.Cipher import AES
 from Crypto import Random
 
@@ -23,14 +24,14 @@ class TweetVizSingleton(type):
 class TweetVizAESCipher:
 
     def __init__(self, key):
-        self.key = key
-        self.BS = 16
+        self.key = hashlib.sha256(key.encode()).digest()
+        self.BS = 32
 
-    def pad(self):
-        return lambda s: s + (self.BS - len(s) % self.BS) * chr(self.BS - len(s) % self.BS)
+    def pad(self, s):
+        return s + (self.BS - len(s) % self.BS) * chr(self.BS - len(s) % self.BS)
 
-    def unpad(self):
-        return lambda s: s[:-ord(s[len(s)-1:])]
+    def unpad(self, s):
+        return s[:-ord(s[len(s)-1:])]
 
     def encrypt( self, raw ):
         raw = self.pad(raw)

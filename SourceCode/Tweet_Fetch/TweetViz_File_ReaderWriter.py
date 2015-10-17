@@ -6,6 +6,7 @@ References: https://docs.python.org/2/tutorial/inputoutput.html -> For file Inpu
 '''
 
 # from TweetVizGeneral import TweetVizSingleton
+import csv
 
 
 class TweetVizFileOperationException(Exception):
@@ -67,10 +68,19 @@ class TweetVizFileReaderWriter(object):
         csv_file = None
         try:
             if self._file_name is not None:
-                csv_file = open(self._file_name, 'r')
-                file_content = csv_file.read()
-                csv_file.close()
-                csv_file = None
+                csv_file = open(self._file_name, 'rb')
+                read = csv.reader(csv_file)
+                # file_content = csv_file.read()
+                # csv_file.close()
+                # csv_file = None
+                line_no = 0
+                for row in read:
+                    if line_no == 0:
+                        line_no += 1
+                        continue
+
+
+                '''
                 if file_content.__len__() > 0:
                     tweet_table = []
                     line_nos = 0
@@ -87,6 +97,7 @@ class TweetVizFileReaderWriter(object):
                 else:
                     self._tweet_table = tweet_table
                     raise TweetVizFileOperationException("File Content is empty:"+self._file_name, -4)
+                '''
             else:
                 self._tweet_table = tweet_table
                 raise TweetVizFileOperationException("File name is not specified", -5)
@@ -106,17 +117,33 @@ class TweetVizFileReaderWriter(object):
         try:
             if self._file_name is not None and self._tweet_table is not None:
                 if self._tweet_table.__len__() > 0:
-                    file_content = 'Search_Category\tTweeter_Hashtag\tTweet_Message\tTweeter_Handle\tTweet_Message\tTweet_Datetime\tTweet_Location\tTweet_RetweetCount\tTweet_FavoriteCount\n'
+                    file_header = []
+                    file_header.append('Search_Category')
+                    file_header.append('Tweeter_Hashtag')
+                    file_header.append('Tweeter_Handle')
+                    file_header.append('Tweet_Message')
+                    file_header.append('Tweet_Datetime')
+                    file_header.append('Tweet_Location')
+                    file_header.append('Tweet_RetweetCount')
+                    file_header.append('Tweet_FavoriteCount')
+                    # file_content = 'Search_Category\tTweeter_Hashtag\tTweet_Message\tTweeter_Handle\tTweet_Message\tTweet_Datetime\tTweet_Location\tTweet_RetweetCount\tTweet_FavoriteCount\n'
+                    file_content = []
+                    csv_file = open(self._file_name, 'wb')
+                    wr = csv.writer(csv_file, quoting=csv.QUOTE_ALL)
+                    wr.writerow(file_header)
                     for row in self._tweet_table:
+                        wr.writerow(row)
+                        '''
                         columns = ''
                         for column in row:
-                            columns += column + '\t'
-                        file_content += columns + '\n'
+                            columns += column.__str__() + '\t'
+                        file_content += columns + '\n\r'
+                        '''
 
-                    csv_file = open(self._file_name, 'w')
-                    csv_file.write(file_content)
-                    csv_file.close()
-                    csv_file = None
+                    # csv_file = open(self._file_name, 'w')
+                    # csv_file.write(file_content)
+                    # csv_file.close()
+                    # csv_file = None
                 else:
                     raise TweetVizFileOperationException("Table Content is empty", -6)
             else:
