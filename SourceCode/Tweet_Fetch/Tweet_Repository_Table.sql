@@ -1,3 +1,5 @@
+/* Name: TweetViz_DB 
+    Author: Seema Suresh */
 CREATE DATABASE if not exists TweetViz_DB DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci
 
 
