@@ -12,7 +12,7 @@ from TweetViz_General import TweetVizAESCipher
 
 import mysql.connector
 import ConfigParser
-
+import logging
 
 class TweetVizDataStorageReader(object):
     '''
