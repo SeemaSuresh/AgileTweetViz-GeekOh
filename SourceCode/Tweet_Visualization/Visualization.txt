@@ -1,0 +1,18 @@
+
+"The below code creates a Double bar graph visualization where the bottom value(Grey colored bar) depicts negative comments while the top value(Red Colored bar) depicts positive comments"
+
+" Imports values and populates to a temporary table "
+tab := RTTabTable new input: (ZnEasy get: 'http://localhost:8000/Anoop_Stuff/test.txt') contents usingDelimiter: $,. 
+"Removing first row as it is not considered part of visualization"
+tab removeFirstRow.tab convertColumnsAsInteger: #('Positive' 'Negative').
+"Creates a Double bar graph" 
+b := RTDoubleBarBuilder new.
+b defaultWidth.
+b defaultVerticalGap.
+b pointName: [ :row | row at: (tab indexOfName: 'Topic') ].
+b points: tab values.
+"maps positive values"
+b bottomValue: [ :row | ((row at: (tab indexOfName: 'Positive')) / 1000) asInteger ] titled: 'Positive opinion(x 1000)'.
+"maps negative values"
+b topValue: [ :row | ((row at: (tab indexOfName: 'Negative')) / 1000)  asInteger]  titled: 'Negative opinion(x 1000)'.
+b open
