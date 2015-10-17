@@ -23,6 +23,10 @@ def main_fun():
     data_handler = TweetVizDataStorageReader()
     data_handler.read_configuration_file()
     data_handler.write_to_file(tweet_table)
+    table_temp = data_handler.read_from_file()
+    data_handler.insert_data_to_db(tweet_table)
+    table_temp = data_handler.read_full_details_from_db()
+
     pass
 
 

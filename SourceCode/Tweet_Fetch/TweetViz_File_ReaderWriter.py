@@ -64,7 +64,7 @@ class TweetVizFileReaderWriter(object):
         This function will read the file mentioned in _file_name of the class and once read it will fill the _tweet_table
         :return: This function is returning void
         '''
-        tweet_table = None
+        tweet_table = []
         csv_file = None
         try:
             if self._file_name is not None:
@@ -73,13 +73,12 @@ class TweetVizFileReaderWriter(object):
                 # file_content = csv_file.read()
                 # csv_file.close()
                 # csv_file = None
-                line_no = 0
+                # line_no = 0
+                # file_content = []
                 for row in read:
-                    if line_no == 0:
-                        line_no += 1
-                        continue
+                    tweet_table.append(row)
 
-
+                self._tweet_table = tweet_table
                 '''
                 if file_content.__len__() > 0:
                     tweet_table = []
@@ -106,7 +105,7 @@ class TweetVizFileReaderWriter(object):
                 csv_file.close()
                 csv_file = None
 
-        pass
+        return tweet_table
 
     def write_file(self):
         '''
