@@ -9,7 +9,11 @@ consumer_secret = 'O6MiuVHUpAgHwBEpsOyzSSfNMvIFdsAX0xhmOrmhKmrDnzxYUo'
 def main_fun():
     # 'collects hashtag without hash'
     # Finalhashtags = []
-    sentence = "Windows10 vs OSXElCapitan"
+    # sentence = "Windows10 vs OSXElCapitan"
+    # sentence = "Trump vs Sanders"
+    # sentence = "Modi vs Rahul"
+    # sentence = "India vs China"
+    sentence = "Windows vs Apple vs Linux"
     hashtagsgen = TweetVizHashTagGenerator()
     hashtagsgen.user_statement = sentence
     hashtags = hashtagsgen.hash_tag_generator()
