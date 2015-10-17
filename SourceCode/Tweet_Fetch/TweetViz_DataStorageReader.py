@@ -37,12 +37,14 @@ class TweetVizDataStorageReader(object):
         :return: Mysql connector
         '''
         connect = None
-        try:
-            connect = mysql.connector.connect(user=self._user_name, password=self._password, host=self._host, database=self._database)
+        # try:
+        connect = mysql.connector.connect(user=self._user_name, password=self._password, host=self._host, database=self._database)
+        '''
         finally:
             if connect is not None:
                 connect.close()
                 connect = None
+        '''
         return connect
 
     def disconnect_from_db(self, connect):
@@ -67,9 +69,11 @@ class TweetVizDataStorageReader(object):
         cipher = None
         try:
             config = ConfigParser.ConfigParser()
+            config.read("TweetViz_ConfigFile.ini")
             self._database = config.get('TweetVizDB', 'Database')
             self._user_name = config.get('TweetVizDB', 'User')
-            cipher = TweetVizAESCipher()
+            cipher = TweetVizAESCipher('GeekOEncrypt1')
+            # text = cipher.encrypt('Passionate79*')
 
             self._password = cipher.decrypt(config.get('TweetVizDB', 'Password'))
             self._host = config.get('TweetVizDB', 'Host')
@@ -90,6 +94,7 @@ class TweetVizDataStorageReader(object):
         connect = None
         cursor = None
         table_data = []
+        table_header = []
         try:
             connect = self.connect_to_db()
             if connect is None:
@@ -105,6 +110,17 @@ class TweetVizDataStorageReader(object):
 
                     cursor.execute(query)
                     row = []
+
+                    table_header.append('Search_Category')
+                    table_header.append('Tweeter_Hashtag')
+                    table_header.append('Tweeter_Handler')
+                    table_header.append('Tweet_Message')
+                    table_header.append('Tweet_Datetime')
+                    table_header.append('Tweet_Location')
+                    table_header.append('Tweet_RetweetCount')
+                    table_header.append('Tweet_FavoriteCount')
+
+                    table_data.append(table_header)
 
                     for (Search_Category, Tweeter_Hashtag, Tweeter_Handle, Tweet_Message, Tweet_Datetime, Tweet_Location, Tweet_RetweetCount, Tweet_FavoriteCount) in cursor:
                         row.append(Search_Category)
@@ -175,7 +191,7 @@ class TweetVizDataStorageReader(object):
 
             # search_category, tweeter_handle, tweet_message, tweet_datetime, tweet_location, no_of_retweets
             insert_tweet_query = ("INSERT INTO TweetViz_DB.tweet_repository "
-                            "(Search_Category, tweeter_handle, tweet_message, tweet_datetime, tweet_location, no_of_retweets, no_of_favorites) "
+                            "(Search_Category, Tweeter_Hashtag, Tweeter_Handle, Tweet_Message, Tweet_Datetime, Tweet_Location, Tweet_RetweetCount, Tweet_FavoriteCount) "
                             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
 
             for row in table_data:
@@ -193,8 +209,11 @@ class TweetVizDataStorageReader(object):
                 cursor.execute(insert_tweet_query, insert_tweet_data)
 
             last_row_id = cursor.lastrowid
+            connect.commit()
 
             cursor.close()
+            cursor = None
+
         finally:
             if cursor is not None:
                 cursor.close()
