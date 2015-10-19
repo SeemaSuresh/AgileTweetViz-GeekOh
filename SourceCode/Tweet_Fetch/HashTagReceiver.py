@@ -18,6 +18,9 @@ def main_fun():
     hashtagsgen.user_statement = sentence
     hashtags = hashtagsgen.hash_tag_generator()
 
+    print(sentence)
+    print(hashtags)
+
 
     # 'create an object of Tweet_Fetch class and instantiate the variables'
     tweet_fetcher = TweetFetcher(consumer_key, consumer_secret)
