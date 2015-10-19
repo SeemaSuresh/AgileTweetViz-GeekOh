@@ -7,9 +7,12 @@ References: https://docs.python.org/2/tutorial/inputoutput.html -> For file Inpu
 
 # from TweetVizGeneral import TweetVizSingleton
 import csv
+import logging
+logging.basicConfig(filename='tweet.log', level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class TweetVizFileOperationException(Exception):
+    logging.debug("Enter class TweetVizFileOperationException.")
     '''
     This is a custom exception used to handle file operations which is taking place in the TweetVizFileReaderWriter class
     '''
@@ -27,10 +30,13 @@ class TweetVizFileOperationException(Exception):
         self.message
 
     def __str__(self):
+        logging.debug("Enter function _str_")
         return "TWEETVIZ_ERROR:" + self.value.__str() + " :" + self.message
 
 
 class TweetVizFileReaderWriter(object):
+    logging.debug("Enter class TweetVizFileReaderWriter.")
+
     '''
     This is a class which will handle all the file operations. It reads a csv files and gives a table containing that
     files content. Also if file name and table given, it can even write a tab separated file
@@ -60,11 +66,12 @@ class TweetVizFileReaderWriter(object):
         self._tweet_table = value
 
     def read_file(self):
+        logging.debug("Enter function read_file.")
         '''
         This function will read the file mentioned in _file_name of the class and once read it will fill the _tweet_table
         :return: This function is returning void
         '''
-        tweet_table = None
+        tweet_table = []
         csv_file = None
         try:
             if self._file_name is not None:
@@ -73,13 +80,12 @@ class TweetVizFileReaderWriter(object):
                 # file_content = csv_file.read()
                 # csv_file.close()
                 # csv_file = None
-                line_no = 0
+                # line_no = 0
+                # file_content = []
                 for row in read:
-                    if line_no == 0:
-                        line_no += 1
-                        continue
+                    tweet_table.append(row)
 
-
+                self._tweet_table = tweet_table
                 '''
                 if file_content.__len__() > 0:
                     tweet_table = []
@@ -106,9 +112,12 @@ class TweetVizFileReaderWriter(object):
                 csv_file.close()
                 csv_file = None
 
-        pass
+        logging.debug("Leave the function read_file")
+        return tweet_table
 
     def write_file(self):
+        logging.debug("Enter the function write_file")
+
         '''
         This function will write the contents of _tweet_table to the file mentioned in _file_name
         :return: This function is returning void
@@ -152,4 +161,6 @@ class TweetVizFileReaderWriter(object):
             if csv_file is not None:
                 csv_file.close()
                 csv_file = None
+
+        logging.debug("Leave the function write_file")
         pass

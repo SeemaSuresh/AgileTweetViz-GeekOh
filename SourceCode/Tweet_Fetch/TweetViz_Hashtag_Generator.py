@@ -10,6 +10,9 @@ Reference: For generating hashtags from sentence = "http://thetokenizer.com/2013
 
 import nltk
 from nltk.corpus import brown
+import logging
+logging.basicConfig(filename='tweet.log', level=logging.INFO, format='%(asctime)s %(message)s')
+
 
 # This is taken from above reference.
 # ---------------------------------------------------------------------------------------------------------------------
