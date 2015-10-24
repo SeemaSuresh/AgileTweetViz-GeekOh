@@ -29,7 +29,25 @@ class TweetVizDataStorageReader(object):
         self._database = None
         self._file_storage = None
         self._log_level = 0
+        self._No_Of_Tweets = 100
+        self._File_Mode = False
         pass
+
+    @property
+    def File_Storage(self):
+        return self._file_storage
+
+    @property
+    def Number_Of_Tweets(self):
+        return self._No_Of_Tweets
+
+    @property
+    def Log_Level(self):
+        return self._log_level
+
+    @property
+    def File_Mode(self):
+        return self._File_Mode
 
     def connect_to_db(self):
         logging.debug("Enter function connect_to_db")
@@ -86,6 +104,15 @@ class TweetVizDataStorageReader(object):
             self._host = config.get('TweetVizDB', 'Host')
 
             self._file_storage = config.get('TweetVizCommon', 'FileMemory')
+            self._No_Of_Tweets = int(config.get('TweetVizCommon', 'NumberOfTweetsToFetch'))
+            self._log_level = int(config.get('TweetVizCommon', 'Log_Level'))
+
+            temp = int(config.get('TweetVizCommon', 'File_Mode'))
+
+            if temp == 1:
+                self._File_Mode = True
+            else:
+                self._File_Mode = False
 
         finally:
             config = None
@@ -226,7 +253,7 @@ class TweetVizDataStorageReader(object):
                 Tweet_RetweetCount = row[6]
                 Tweet_FavoriteCount = row[7]
 
-                if Tweet_Message.__contains__("\xF0\x9F"):
+                if Tweet_Message.__contains__("\xF0"):
                     continue
 
                 insert_tweet_data = (Search_Category, Tweeter_Hashtag, Tweeter_Handle, Tweet_Message,Tweet_Datetime, Tweet_Location, Tweet_RetweetCount, Tweet_FavoriteCount)

@@ -17,6 +17,15 @@ class TweetFetcher:
         self.consumer_secret = consumer_secret
         self.auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         self.api = tweepy.API(self.auth)
+        self._No_Of_Tweets_to_fetch = 100
+
+    @property
+    def No_Of_Tweets_Fetch(self):
+        return self._No_Of_Tweets_to_fetch
+
+    @No_Of_Tweets_Fetch.setter
+    def No_Of_Tweets_Fetch(self, value):
+        self._No_Of_Tweets_to_fetch = value
 
     def get_tweets(self, parsed_hashtags, search_sentence):
         logging.debug("entered get_tweets")
@@ -25,7 +34,7 @@ class TweetFetcher:
 
         table_data = []
         logging.info("Table data %s", table_data)
-        max_tweets = 100*parsed_hashtags.__len__()
+        max_tweets = self._No_Of_Tweets_to_fetch*parsed_hashtags.__len__()
 
         for tags in parsed_hashtags:
             logging.debug("Enter for loop")
@@ -58,7 +67,7 @@ class TweetFetcher:
                             Tweeter_Hashtag = tags
                             Tweeter_Handle = tweet.user.screen_name.encode('utf-8')
                             Tweet_Message = tweet.text.encode('utf-8')
-                            if Tweet_Message.__contains__('\xF0\x9F\x98\x81'):
+                            if Tweet_Message.__contains__('\xF0') or Tweet_Message.__contains__('\xF3'):
                                 continue
                             Tweet_Datetime = tweet.created_at
                             Tweet_Location = tweet.coordinates
