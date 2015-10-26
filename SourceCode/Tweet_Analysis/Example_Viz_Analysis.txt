@@ -1,3 +1,5 @@
+"Have taken this from Pharo in nutshell book - modified based on the Tweet class which was created."
+
 |colTweets|
 b := RTMondrian new.
 b shape circle color: Color tan.
