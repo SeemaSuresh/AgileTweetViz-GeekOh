@@ -1,0 +1,16 @@
+| b |
+	b := RTStackBarPlot new.
+	b interaction popupText.
+	b colorPalette colors: { Color blue . Color lightBlue }.
+	b add: #(37	33	10) title: 'Performace Windows 10 Good'.
+	b add: #(	56	17	8 ) title: 'Performance OS X Good'.
+	b add: #(42	29	15	) title: 'UI Windows Good'.
+	b add: #(40	22	6) title: 'UI OS X Good'.	
+					
+	b addLegend: #( 'agree' 'neutral' 'disagree' ).
+	b barWidth: 200 height: 20.
+
+	b addLabelToBars: [ :assoc | (assoc key  / b totalSum * 100) asInteger asString, '%' ] if: [:assoc | assoc key > 5] color: Color black.
+
+	b build.
+	^ b view
