@@ -1,0 +1,14 @@
+"Have taken this from Pharo in nutshell book - modified based on the Tweet class which was created."
+
+|colTweets|
+b := RTMondrian new.
+b shape circle color: Color tan.
+
+colTweets := CSVFileToTweetVizModel createTweets.
+
+b nodes: colTweets.
+b edges connectToAll: [ :tweet |
+colTweets select: [ :t | t isSimilarTo: tweet ] ].
+b layout force.
+b normalizer normalizeSize: [ :tweet | tweet tweetMessage size ].
+b

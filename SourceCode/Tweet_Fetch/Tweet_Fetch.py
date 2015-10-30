@@ -6,6 +6,8 @@ reference - http://stackoverflow.com/questions/22469713/managing-tweepy-api-sear
             http://www.benkhalifa.com/twitter-crawler-python
 '''
 import tweepy
+import logging
+logging.basicConfig(filename='tweet.log', level=logging.INFO, format='%(asctime)s %(message)s')
 from geopy import geocoders
 
 
@@ -15,14 +17,27 @@ class TweetFetcher:
         self.consumer_secret = consumer_secret
         self.auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         self.api = tweepy.API(self.auth)
+        self._No_Of_Tweets_to_fetch = 100
+
+    @property
+    def No_Of_Tweets_Fetch(self):
+        return self._No_Of_Tweets_to_fetch
+
+    @No_Of_Tweets_Fetch.setter
+    def No_Of_Tweets_Fetch(self, value):
+        self._No_Of_Tweets_to_fetch = value
 
     def get_tweets(self, parsed_hashtags, search_sentence):
+        logging.debug("entered get_tweets")
         # hashtag_count = len(parsed_hashtags)
         # 'an implememtation to handle multiple hashtags'
 
         table_data = []
-        max_tweets = 100*parsed_hashtags.__len__()
+        logging.info("Table data %s", table_data)
+        max_tweets = self._No_Of_Tweets_to_fetch*parsed_hashtags.__len__()
+
         for tags in parsed_hashtags:
+            logging.debug("Enter for loop")
             # return_result = self.api.search(tags)
 
             query = tags
@@ -32,6 +47,7 @@ class TweetFetcher:
             last_id = -1
             selected_count = 0
             while selected_count < fetch_max_tweets:
+                logging.debug("Enter while loop. Selected counnt:- %s fetch_max_tweets:- %s", selected_count, fetch_max_tweets)
                 count = fetch_max_tweets - selected_count
                 try:
                     new_tweets = self.api.search(q=query, count=count, max_id=str(last_id - 1), result_type="mixed", lang="en")
@@ -39,14 +55,20 @@ class TweetFetcher:
                         break
 
                     for tweet in new_tweets:
+                        logging.debug("Enter for loop")
                         if not tweet.text.encode('utf-8').startswith('RT'):
+                            logging.debug("Accept if condition for checking re tweets")
                             if tweet.entities.__contains__('media') and tweet.entities['media'][0]['type'] == 'photo':
+                                logging.debug("Checking for photos in tweet")
                                 continue
+
                             row = []
                             Search_Category = search_sentence
                             Tweeter_Hashtag = tags
                             Tweeter_Handle = tweet.user.screen_name.encode('utf-8')
                             Tweet_Message = tweet.text.encode('utf-8')
+                            if Tweet_Message.__contains__('\xF0') or Tweet_Message.__contains__('\xF3'):
+                                continue
                             Tweet_Datetime = tweet.created_at
                             Tweet_Location = tweet.coordinates
 
@@ -66,6 +88,7 @@ class TweetFetcher:
                     last_id = new_tweets[len(new_tweets)-1].id
                 except tweepy.TweepError as e:
                     print e.message
+                    logging.info("error message %s", e)
                     # depending on TweepError.code, one may want to retry or wait
                     #  to keep things simple, we will give up on an error
 
