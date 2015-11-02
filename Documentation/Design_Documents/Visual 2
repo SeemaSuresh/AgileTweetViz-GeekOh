@@ -1,0 +1,33 @@
+| b  |
+csvContent := 
+'Soccer,10,Olympic
+Marathon,15,Olympic
+Badminton,8,Olympic
+Baseball,34,Olympic
+Kabaddi,36,Common
+Ping Pong,10,Common,
+Olympic,50,
+Common,35,'.
+values := (NeoCSVReader on: csvContent readStream) upToEnd.
+
+b := RTMondrian new.
+b shape label.
+
+b interaction popupText: [ :aClass || stream |
+stream := (Float readFrom: (values detect: [ :a | a first = aClass]) second)].
+
+b shape color: (Color random alpha: 0.5).
+b nodes: (values collect: #first).
+
+
+b edges
+moveBehind;
+connectFrom: [:aName | (values detect: [ :a | a first = aName]) third ].
+
+b layout cluster.
+
+b normalizer
+normalizeColor:[ :aName | (Float readFrom: (values detect: [ :a | a first = aName]) second)] using: (ColorPalette diverging colors: 4 scheme: 'RdBu') ;
+normalizeSize: [ :aName | (Float readFrom: (values detect: [ :a | a first = aName]) second)].
+
+b
