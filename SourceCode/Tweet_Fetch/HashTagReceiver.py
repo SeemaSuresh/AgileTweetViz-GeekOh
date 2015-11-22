@@ -68,6 +68,8 @@ def main_fun(user_text):
     # 'create an object of Tweet_Fetch class and instantiate the variables'
     tweet_fetcher = TweetFetcher(consumer_key, consumer_secret)
     tweet_fetcher.No_Of_Tweets_Fetch = data_handler.Number_Of_Tweets
+    if tweet_fetcher.No_Of_Tweets_Fetch != data_handler.Number_Of_Tweets:
+        tweet_fetcher._No_Of_Tweets_to_fetch = data_handler.Number_Of_Tweets
 
     tweet_table = tweet_fetcher.get_tweets(hashtags, sentence)
     # print(tweet_table)

@@ -1,0 +1,64 @@
+VisualizeHashTags
+	
+	|colTweets csv  newview       searchCat RootCol root hashCol hash secondEdgeCol secondedge nexthash nexthashCol nextEdge nextEdgeCol|
+csv := CSVFileToTweetVizModel new.
+colTweets := OrderedCollection new.
+csv readCSVFile: colTweets.
+searchCat := csv CreateSearchCategories: colTweets.
+csv CreateHashTags: searchCat.
+
+RootCol := OrderedCollection new.
+hashCol := OrderedCollection new.
+secondEdgeCol := OrderedCollection new.
+nexthashCol := OrderedCollection new.
+nextEdgeCol := OrderedCollection new.
+
+newview := RTView new.
+
+searchCat do: [ :search|
+	root := (RTEllipse new size: search UserSentence size*8; color: (Color green alpha: 0.5); elementOn: search) + (RTLabel new text: search UserSentence) @ RTDraggable.
+	RootCol add: root.
+	search HashTags_Generated do: [ :tempHash|
+		 hash := (RTEllipse new size: tempHash AssociatedTweets size; color: Color tan; elementOn: tempHash) @RTDraggable @(RTPopup new textElement: tempHash Tweeter_Hashtag).
+		hashCol add: hash.
+		secondedge := RTEdge from: root to: hash.
+		secondedge + (RTDirectedLine new color: Color blue).
+		secondEdgeCol add: secondedge.
+		
+		tempHash Linked_Hashtags do: [ :linkHash|
+			nexthash := (RTEllipse new size: linkHash AssociatedTweets size; color: Color red; elementOn: linkHash) @RTDraggable @(RTPopup new textElement: linkHash Tweeter_Hashtag).
+			nexthashCol add: nexthash.
+			nextEdge := RTEdge from: hash to: nexthash.
+			nextEdge + (RTDirectedLine new color: Color yellow).
+			nextEdgeCol add: nextEdge.
+			
+			].
+		
+		].
+	 ].
+
+newview
+	addAll: RootCol;
+	addAll: hashCol;
+	addAll: secondEdgeCol;
+	addAll: nexthashCol;
+	addAll: nextEdgeCol.
+
+"
+RTHorizontalLineLayout new gapSize: 1;on: RootCol, hashCol, nexthashCol.
+
+
+RTClusterLayout on: newview elements edges: newview edges.
+newview edges do: [ :e | e trachelShape pushBack ].	
+
+RTCircleLayout new initialRadius: 260; on: newview elements.	
+"
+RTTreeLayout on: newview elements.
+
+"
+RTForceBasedLayout new 
+	charge: -500;
+	on: newview elements.
+"
+	
+^newview.

@@ -34,7 +34,7 @@ class TweetFetcher:
 
         table_data = []
         logging.info("Table data %s", table_data)
-        max_tweets = self._No_Of_Tweets_to_fetch*parsed_hashtags.__len__()
+        max_tweets = self.No_Of_Tweets_Fetch*parsed_hashtags.__len__()
 
         for tags in parsed_hashtags:
             logging.debug("Enter for loop")
