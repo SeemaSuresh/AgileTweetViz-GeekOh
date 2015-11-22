@@ -31,6 +31,7 @@ class TweetVizDataStorageReader(object):
         self._log_level = 0
         self._No_Of_Tweets = 100
         self._File_Mode = False
+        self._Type_Of_Tweets  = 'mixed'
         pass
 
     @property
@@ -48,6 +49,14 @@ class TweetVizDataStorageReader(object):
     @property
     def File_Mode(self):
         return self._File_Mode
+
+    @property
+    def Type_Of_Tweets(self):
+        return self._Type_Of_Tweets
+
+    @Type_Of_Tweets.setter
+    def Type_Of_Tweets(self, value):
+        self._Type_Of_Tweets = value
 
     def connect_to_db(self):
         logging.debug("Enter function connect_to_db")
@@ -109,10 +118,12 @@ class TweetVizDataStorageReader(object):
 
             temp = int(config.get('TweetVizCommon', 'File_Mode'))
 
+
             if temp == 1:
                 self._File_Mode = True
             else:
                 self._File_Mode = False
+            self._Type_Of_Tweets = config.get('TweetVizCommon', 'Type_Of_Tweet')
 
         finally:
             config = None

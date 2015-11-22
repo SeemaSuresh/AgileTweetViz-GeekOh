@@ -25,7 +25,8 @@ def main_fun(user_text):
         sentence = user_text
         print('User argument got - ' + user_text.__str__())
     else:
-        sentence = 'Windows10 vs OSXElCapitan'
+        #sentence = 'Windows10 vs OSXElCapitan'
+        sentence = 'Sundevils vs Wildcats'
         print('Did not get user argument taking default- '+sentence)
 
     data_handler = TweetVizDataStorageReader()
@@ -70,6 +71,8 @@ def main_fun(user_text):
     tweet_fetcher.No_Of_Tweets_Fetch = data_handler.Number_Of_Tweets
     if tweet_fetcher.No_Of_Tweets_Fetch != data_handler.Number_Of_Tweets:
         tweet_fetcher._No_Of_Tweets_to_fetch = data_handler.Number_Of_Tweets
+
+    tweet_fetcher.Type_Of_Tweets = data_handler.Type_Of_Tweets
 
     tweet_table = tweet_fetcher.get_tweets(hashtags, sentence)
     # print(tweet_table)
