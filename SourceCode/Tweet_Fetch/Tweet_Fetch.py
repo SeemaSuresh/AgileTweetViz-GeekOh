@@ -18,6 +18,7 @@ class TweetFetcher:
         self.auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         self.api = tweepy.API(self.auth)
         self._No_Of_Tweets_to_fetch = 100
+        self._type_of_tweets = "mixed"
 
     @property
     def No_Of_Tweets_Fetch(self):
@@ -26,6 +27,14 @@ class TweetFetcher:
     @No_Of_Tweets_Fetch.setter
     def No_Of_Tweets_Fetch(self, value):
         self._No_Of_Tweets_to_fetch = value
+
+    @property
+    def Type_Of_Tweets(self):
+        return self._type_of_tweets
+
+    @Type_Of_Tweets.setter
+    def Type_Of_Tweets(self, value):
+        self._type_of_tweets = value
 
     def get_tweets(self, parsed_hashtags, search_sentence):
         logging.debug("entered get_tweets")
@@ -50,7 +59,7 @@ class TweetFetcher:
                 logging.debug("Enter while loop. Selected counnt:- %s fetch_max_tweets:- %s", selected_count, fetch_max_tweets)
                 count = fetch_max_tweets - selected_count
                 try:
-                    new_tweets = self.api.search(q=query, count=count, max_id=str(last_id - 1), result_type="mixed", lang="en")
+                    new_tweets = self.api.search(q=query, count=count, max_id=str(last_id - 1), result_type=self.Type_Of_Tweets, lang="en")
                     if not new_tweets:
                         break
 
