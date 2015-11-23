@@ -44,6 +44,7 @@ class TweetFetcher:
         table_data = []
         logging.info("Table data %s", table_data)
         max_tweets = self.No_Of_Tweets_Fetch*parsed_hashtags.__len__()
+        bException = False
 
         for tags in parsed_hashtags:
             logging.debug("Enter for loop")
@@ -53,11 +54,16 @@ class TweetFetcher:
             fetch_max_tweets = max_tweets/parsed_hashtags.__len__()
             # searched_tweets = [status for status in tweepy.Cursor(self.api.search, q=query, include_rts=False).items(max_tweets)]
 
+            #if bException:
+            #    break
+
             last_id = -1
             selected_count = 0
             while selected_count < fetch_max_tweets:
                 logging.debug("Enter while loop. Selected counnt:- %s fetch_max_tweets:- %s", selected_count, fetch_max_tweets)
                 count = fetch_max_tweets - selected_count
+                if bException:
+                    break
                 try:
                     new_tweets = self.api.search(q=query, count=count, max_id=str(last_id - 1), result_type=self.Type_Of_Tweets, lang="en")
                     if not new_tweets:
@@ -97,9 +103,10 @@ class TweetFetcher:
                     last_id = new_tweets[len(new_tweets)-1].id
                 except tweepy.TweepError as e:
                     print e.message
-                    logging.info("error message %s", e)
+                    logging.error("error message %s", e)
                     # depending on TweepError.code, one may want to retry or wait
                     #  to keep things simple, we will give up on an error
+                    bException = True
 
             print tags
 
