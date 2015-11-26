@@ -25,8 +25,8 @@ def main_fun(user_text):
         sentence = user_text
         print('User argument got - ' + user_text.__str__())
     else:
-        #sentence = 'Windows10 vs OSXElCapitan'
-        sentence = 'Sundevils vs Wildcats'
+        sentence = 'Windows vs Android vs IOS'
+        # sentence = 'Sundevils vs Wildcats'
         print('Did not get user argument taking default- '+sentence)
 
     data_handler = TweetVizDataStorageReader()

@@ -7,6 +7,7 @@ reference - http://stackoverflow.com/questions/22469713/managing-tweepy-api-sear
 '''
 import tweepy
 import logging
+import time
 logging.basicConfig(filename='tweet.log', level=logging.INFO, format='%(asctime)s %(message)s')
 from geopy import geocoders
 
@@ -104,9 +105,12 @@ class TweetFetcher:
                 except tweepy.TweepError as e:
                     print e.message
                     logging.error("error message %s", e)
-                    # depending on TweepError.code, one may want to retry or wait
-                    #  to keep things simple, we will give up on an error
-                    bException = True
+                    if e.reason == '[{u\'message\': u\'Rate limit exceeded\', u\'code\': 88}]':
+                        time.sleep(900)
+                    else:
+                        # depending on TweepError.code, one may want to retry or wait
+                        #  to keep things simple, we will give up on an error
+                        bException = True
 
             print tags
 
