@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}Introduction}{4}
+\contentsline {section}{\numberline {2}Understanding hashtag relations of software engineering tweets}{4}
+\contentsline {section}{\numberline {3}Development Process}{5}
+\contentsline {section}{\numberline {4}Requirements: Problem Statement and Specifications}{5}
+\contentsline {section}{\numberline {5}Architectural Design}{6}
+\contentsline {subsection}{\numberline {5.1}Tweet Fetch}{7}
+\contentsline {subsection}{\numberline {5.2}Tweet Analysis}{8}
+\contentsline {subsection}{\numberline {5.3}Tweet Visualization}{9}
+\contentsline {section}{\numberline {6}Project Plan}{9}
+\contentsline {section}{\numberline {7}Management Plan}{10}
+\contentsline {section}{\numberline {8}Implementation}{13}
+\contentsline {section}{\numberline {9}Validation and Verification}{15}
+\contentsline {section}{\numberline {10}Outcomes and lessons learned}{17}
+\contentsline {section}{\numberline {11}Future Work, Acknowledgment and Conclusion}{18}
