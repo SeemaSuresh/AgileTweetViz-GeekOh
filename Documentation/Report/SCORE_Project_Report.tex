@@ -1,5 +1,12 @@
 \documentclass[11pt]{article}
 \usepackage{graphicx}
+\usepackage{geometry}
+\geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
 \graphicspath{ {images/} }
 
 \begin{document}
@@ -22,54 +29,109 @@
 
 
 \section{Introduction}
-The popularity of social media has made twitter an important platform for information transfer, news reporting and public opinion. Despite the significant potential for measuring public opinion, finding the perspective for any topic by sorting through massive number of tweets is an arduous task. In this project , we try to establish the relationship between different aspects of tweets and further visualize them for easy interpretation. This program also has the capacity to download, analyze and visualize the tweets for any mentioned topic present or past.
+The popularity of social media has made twitter an important platform for information transfer, news reporting and public opinion. Despite the significant potential for measuring public opinion, finding the perspective for any topic by sorting through massive number of tweets is an arduous task. To counteract this problem, our vision is to give tweet visualization a new meaning by distinguishing and filtering out tweets that are of concern to the user. This meaning can be derived in a top-down tree like format so that the bottom most node per say, gives the detailed view on a topic, be it social/technical. The idea is to look for keywords that matches best from the given statement and jolt it down further to extract popular users (with tweets that mattered the most to other users) and hashtags that are relevant. Further, these popular people profile and hashtags are combined to obtain a single visualization that gives an overall popularity and analysis of the topics of interest.
+
+ The tweets are fetched based on user given topics, where topics can be anything from a word to few sentences. This process is achieved by using two separate libraries in Python: NLTK library (Natural Language Toolkit) and Tweepy library. For analyzing tweets, a smalltalk based platform Moose/Pharo is used where a metamodel is defined which in turn will feed data for visualization. Finally, visualization is achieved using Roassal library in Pharo.
  
-The tweets are fetched based on user given topics, where topics can be anything from a word to few sentences. This process is achieved by using two	 separate libraries in Python: NTLK library (Natural Language Toolkit) and Tweepy library. For analyzing tweets, a smalltalk based platform “Moose/Pharo” is used where a metamodel is defined which in turn will feed data for visualization. Finally, visualization is achieved using Roassal library in Pharo.
- 
-We have demonstrated assorted visualization, trying to utilize the maximum power of Roassal library, while establishing relationship between different aspects of tweet and its user. Further, our paper is divided as follows: 2) Understanding hashtag relation 4-5) Requirements 6) Architecture 11-12) Outcomes and Future work.
+We have demonstrated assorted visualization, trying to utilize the maximum power of Roassal library, while establishing relationship between different aspects of tweet and its user. 
 
-\section{Understanding hashtag relations of software engineering tweets}
-Twitter is a platform, where individuals can express their views by using sentences having 140 characters or less. These tweets can further be liked or retweeted by other followers, thus increasing the area of viewership among the users of Twitter. Another important characteristics of Twitter is the association of tweets with a certain topic by using "hashtags". A hashtag is created by placing a "\#" in-front of a word. By doing so, a tweet can be tagged to a certain topic. A tweet can have a single or multiple hashtags thus representing either one or multiple topics simultaneously. For example, to express a security concern in Java, a tweet can be mentioned as \textit{"A prog example of trojan using Java. Be aware of threat! \textbf{\textit{\#java \#security}}"} or to announce a job posting a tweet can be mentioned as \textit{"Experienced software engineers needed for front end development. DM me details. \textbf{\textit{\#javascript \#UIdesign \#jobs}}"}. By mentioning more than one hastag in a tweet, a user is trying to establish the relationship between two different topics. Therefore, in our second example, we can find same tweet by searching \#javascript and \#jobs. 
+\section{Filtering and sorting of tweets based on hashtags, user and tweet relationship}
 
-For this project,our first aim is to understand the relationship between the hashtags present in tweets related to Software Engineering . Secondly, we have utilized this relationship to categorize the tweets and tweet handlers into different groups. Finally, we have tried visualizing the analyzed tweets and their relationship so as, this information can be conveyed in a much compact and simpler manner. This analysis will help us to determine the popularity of an user in a particular field of interest. For example, user is tweeting on the topics related to \#Java, \#Security, \#Job, \#Issue, and \#JDK. Among these topics, \#Security is the most popular hashtag. This condition can be determined based on the counts of retweets and number of likes on a tweet. Our aim is to clearly understand user area of expertise. In this case, it is Java Security even though user is tweeting about issues, job and jdk.
+Twitter is a platform, where individuals can express their views by using sentences having 140 characters or less. These tweets can further be liked or retweeted by other followers, thus increasing the area of viewership among the users of Twitter. Another important characteristics of Twitter is the association of tweets with a certain topic by using "hashtags". A hashtag is created by placing a "\#" in front of a word. By doing so, a tweet can be tagged to a certain topic. A tweet can have a single or multiple hashtags thus representing either one or multiple topics simultaneously. For example, to express a security concern in Java, a tweet can be mentioned as "A prog example of trojan using Java. Be aware of threat! \#java \#security" or to announce a job posting a tweet can be mentioned as "Experienced software engineers needed for front end development. DM me details. \#java \#UIdesign \#jobs". By mentioning more than one hashtag in a tweet, a user is trying to establish the relationship between two different topics. Therefore, in our second example, we can find same tweet by searching \#java and \#jobs. Hashtag relationship is important because using this on a single tweet level, we can establish a tweets relationship to various topics. But on massive level we can find the pattern of user and tweet to vast majority of social/technical topics. The added advantage is, as security was the most used hashtag, our program will make sure that we include the tweets that are concerned with the security of software only. It will keep the focus directed towards the main topic and will not wander off and start considering the other security based topics such as national security, community security, etc.
 
-\section{Development Process}
-For this project we have used Agile process with Scrum methodology. The main reason to choose this process was for its ability to handle change effectively. Taiga and Google site were used for implementation of software process where as Git was used for change management. These topics have been further discussed in the following subheadings: Project Plan, Management Plan, Implementation, Verification and Validation.
+We are grouping the tweets into this hashtag relationships with a common root hashtag. Apart from this we are trying to build the relationship between number of tweets a user tweeted about a topic. Finally combining the popularity of a hashtag and user and grouping all those tweets which falls under both these group to get the most relevant tweets.
+
 \section{Requirements: Problem Statement and Specifications}
-Our project description as mentioned in the SCORE website is 
+We have gathered our initial requirements from SCORE website\cite{SCOREwebsite} and have further refined them by conducting brainstorming sessions with the team and online meetings with our project sponsor.
 
-"The popularity of social media has made Twitter a reliable platform for measuring social opinion. Unfortunately, giving a meaning to a massive number of tweets is challenging, despite the significant potential for measuring public opinion. This project is about creating an agile Tweet visualization engine. This engine should provide the ability to easily craft and tailor visualizations of a possibly large number of tweets. Visual patterns, emerging from the visualizations, will indicate facts. Visualizations should provide a way to easily navigate and crawl over tweets. Scope of the Project - Regarding the technical part of this project, it is (highly) suggested:
+We have developed different user stories which would help us to achieve our vision of the project. 
+
 \begin{itemize}
-\item to first define a meta-model for Tweets using the Moose platform;
-\item to build the visualization engine on top of the Roassal visualization engine;
-\item to carry out some tasks based on actual public opinions." \cite{SCOREwebsite}
+\item Our one of the part of vision was to fetch meaningful tweets based on the user input. To achieve this we had "USER-STORY52:As a user of Tweet Viz, I should be able to give the topic or sentence to the Product, using that topic/sentence product has to fetch tweets"
+
+\item Second important part of the vision was to analyze fetched tweets in a meaningful way. To achieve this we had "USER-STORY53:As a developer I need meta models to store the tweets, user details, hashtags, location etc. in objects. These objects will be used to carry out visualization." or "USER-STORY23:As a user, I would like to relate the fetched tweets with their user handles"
+
+\item Third important part of the vision was to visualize the way which can clearly show the grouping of tweets and users, hashtag popularity, hashtag relationships. To achieve aspects we had different users stories like - "USER-STORY95:As a user I would like a graph representation of the retweets and favorites for each hashtags", "USER-STORY24: As a user, I would like to visualize tweets with the user who have tweeted them", "USER-STORY79: As a user I need to get a visualization pattern based on the given search category"
+
 \end{itemize}
 
-We have gathered and refined our requirements by conducting Brain Storming sessions with the team and Online Meetings with our project sponsor. As sprints proceeded, our understanding of the new tool - Roassal in Pharo increased , which in turn helped to explore new possibilities for the product. 
+Apart from this we had certain process requirements like
 
-From the problem statements, it was clear that we had two process requirements: 1) Meta-model was required to be created in MOOSE platform 2) Visualization were to be performed using Roassal. As both the platforms were new to us, the main task in our first sprint was to understand them. We went ahead and generated our first set of product related user stories. This involved user requirements like "As a user, I want to fetch tweets based on a given topic.", "As a user, I would like to give the input in a web page", "As a user, I would like to develop a meta model of the downloaded tweets", "As a user, I would like to develop a visualization of the meta-model". As the user stories were vague, we discussed this problem with our sponsor Dr Alexander Bergel, Dr. Kevin Gary and later conducted brainstorming sessions to create better user stories. We decided to place more emphasis on Meta-model creation and visualization, rather than user interface. 
+\begin{itemize}
+\item "USER-STORY25: Pharo/MOOSE has to be used for analysis of tweets"
+\item "USER-STORY26: Roassal should be used for visualization of analysis done on tweets."
+\end{itemize}
 
-Agile helped us to continuously add or change the requirements without hindering the product development. At the end of first sprint, requirements related to fetching of tweets were finalized while, still debating on meta-model and visualization. Requirements for Meta-model and Visualization were finalized at the end of sprint 2 and sprint 3 respectively. We discussed with the sponsor after the 4th sprint and the incorporated the changes to the existing requirements. Any unclear requirement acted as a placeholder for a conversation with the product owner to better understand the requirement. Software requirement Specification was updated throughout all the sprints.
+We have achieved our vision by first establishing the flow of hashtags and further relating those hashtags to the twitter users and their tweets. Secondly, we have utilized this relationship to categorize the tweets and tweet handlers into different groups. Finally, we have visualized the analyzed tweets and their relationship so as, this relationship can be observed and studied in a much compact and simpler manner.
+This analysis will help us to determine the popularity of an user in a particular field of interest. For example, user is tweeting on the topics related to \#Java, \#Security, \#Job, \#Issue, and \#JDK. Among these topics, \#Security is the most popular hashtag. This condition can be determined based on the counts of retweets and number of likes on a tweet. Our aim is to clearly understand user area of expertise. In this case, it is Java Security even though user is tweeting about issues, job and jdk.
 
-\section{Architectural Design}
-The three main modules of this project are: - 1) Tweet Fetch 2) Tweet Analysis 3) Tweet Visualization
+
+\section{Development Process}
+
+In this project we used Agile methodology with Scrum process. The main reason to choose was for its ability to produce deliverable from beginning even without having full set of clear requirements. For example, we were sure on how to proceed for the user stories related to Tweet fetch, but were unclear on the methods that will be used to create meta-model and visualization. Considering this, agile lets us start working on the known components from the day one. Another reason to choose Scrum was for its ability to handle changes effectively. It provided us the capacity to continuously update the backlog, while refining requirements in the background and at the same time working on known components of the project. In the beginning of project our understanding of requirements was only limited to what was mentioned on SCORE website. We knew this will change after our meeting with our sponsor and so it did. Scrum ensured the risk involved with the updating requirements and using new and unknown tool have minimum negative impact on our project. 
+
+From risk management perspective, we were able to identify two major hurdles that we may face during the project duration: 
+
+\begin{enumerate}
+\item Lack of knowledge of Pharo/MOOSE may slow down this time sensitive project.
+\item Whether chosen Database Management System would handle or scale to the fetched twitter payload.
+\end{enumerate}
+
+
+Lack of understanding of Pharo/MOOSE was our biggest challenge. We dedicated one full sprint out of 5, trying to get better understanding of the new language and environment. We were skeptical about the "What if not" part of the learning process, thus discussing number of other options. First option discussed was; can the functionality depending on the PHARO/MOOSE be developed using some other technology? We identified that these functionalities can be implemented to some extent using the libraries provided by the python and also javascript, but the unique feature of Pharo/MOOSE is object profiling. The features of MOOSE/PHARO help in the easy creation and integration of meta model and visualization as both are closely related. Given that, use of Pharo/ Moose was also part of process requirements, moving out of Pharo/MOOSE was ruled out. To improve the technical knowledge each team member was given certain topics in the Pharo/MOOSE in parallel to the product development. Thus filling the knowledge void.
+
+Secondly, we were not sure what should be the preferred data storage method as we were planning to store 1 million tweets. Our initial choice of Database was Microsoft SQL Server Express edition. After doing the feasibility study of space and time impact of million tweets database interaction, it was found that Express edition was not able to handle 1 million records due to storage restriction. We decided to go ahead with MySQL. But the question that followed was whether or not we need to use Database at all in the project. As we were fairly new to MOOSE, we were not sure of configuring and accessing database from MOOSE. After further reading and research, we got a better way of adding packages that could directly read from CSV file. This helped us to easily create the meta-model for the project. After exploring and discussing all the options mentioned above, we were clear of right solution, thus making rest of the project development a smooth sail.  
+
+As both the platforms were new to us, the main task in our first sprint was to understand them. We went ahead and generated our first set of product related user stories. Some of the user stories were vague, we discussed this problem with our sponsor Dr Alexander Bergel, Dr. Kevin Gary and later conducted brainstorming sessions to create better user stories. We decided to place more emphasis on Meta-model creation and visualization, rather than user interface. 
+
+Agile helped us to continuously add or change the requirements without hindering the product development. At the end of first sprint, requirements related to fetching of tweets were finalized while, still debating on meta-model and visualization. Requirements for Meta-model and Visualization were finalized at the end of sprint 2 and sprint 3 respectively. We discussed with the sponsor after the 4th sprint and then incorporated the changes to the existing requirements. Any unclear requirement acted as a placeholder for a conversation with the product owner to better understand the requirement. Software Requirements Specification(SRS) were updated throughout all the sprints.
+
+Taiga and Google site were used for implementation of software process whereas Git was used for change management.
+
+
+\section{Architecture and Design}
+From the technical aspect of the project description, it was clear that 3 main parts of the project are
+
+\begin{itemize}
+\item Creation of meta model
+\item Visualizing the tweets present in the meta model
+\item Finally answering some questions from that visualization and analysis.
+\end{itemize}
+
+
+Based on the present information, it was deducted that we need a separate module for the meta-model creation. Our code should have the ability to analyze the tweets and generate the meta-model thus establishing the relationships between tweets. Once we have the meta-model, based on the 2nd technical requirement we have to visualize different components of tweets. Different components of tweet from same meta-model can be used in several forms to create various visualizations depicting different meaning. For addressing all the 3 points, it is very important to have meaningful set of tweets. Fetching tweets doesn't come under meta model creation or visualization modules. We need a separate module which has the ability to fetch meaningful set of tweets from twitter and can pass it to meta model module more like a business logic layer. That's why we have come up with the following 3 different modules for our product.
+\begin{enumerate}
+\item Tweet Fetch - Get meaningful tweets
+\item Tweet Analysis - Create meta-model
+\item Tweet Visualization - Visualize the relationship of tweets.
+\end{enumerate}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{HighLevelDesign.jpg}
 \caption{High Level Modules}
 \end{figure}
-\subsection{Tweet Fetch}
-Tweet fetch Module is responsible for fetching tweets based on user input. This module can further be divided into three main parts: Processing user input, Fetching tweets and Storing tweets. A user input can be anything from a single word to a complete sentence , which is then parsed to generate hashtags. These hashtags are used to search and download the relevant tweets. Once the tweets are downloaded, they are stored in SQL tables and CSV file. Our next module, Tweet Analysis, directly takes CSV file as input. We chose MySQL over SQL Express, because of its ability to store large number of tweets.
 
-DataStorageReader as outlined in figure 2, is a singleton class and is responsible for reading configuration file, interacting with TweetViz MySQL DB and interacting with CSV file through filereaderwriter component. Configuration file contains following parameters - 
-\begin{enumerate}
-\item SQL connection related parameters.
-\item Type of tweets fetched - Most recent, Popular, Mixed.
-\item Type of storage - CSV or SQL.
-\item CSV file path.
-\item Debug level.  
-\end{enumerate}
+\subsection{Tweet Fetch}
+Tweet fetch Module is responsible for fetching tweets based on user input. This module can further be divided into three main parts: 
+\begin{itemize}
+\item Processing user input
+\item Fetching tweets
+\item Storing tweets.
+\end{itemize}
+
+A user input can be anything from a single word to a complete sentence , which is then parsed to generate hashtags. These hashtags are used to search and download the relevant tweets. Once the tweets are downloaded, they are stored in SQL table and CSV file. Our next module, Tweet Analysis, directly takes CSV file as input. 
+DataStorageReader as outlined in figure 2, is responsible for reading configuration file, interacting with TweetViz MySQL DB and interacting with CSV file through filereaderwriter component. Configuration file contains following parameters - SQL connection related parameters, Type of tweets fetched - most recent, popular, mixed; Type of storage - CSV or SQL, CSV file path, Debug level
+ 
+For security reasons, Sql parameters are encrypted and stored in configuration file. HashtagGenerator is responsible for generating the hashtags from the given user input using natural language processing. TweetFetch component will get the tweets from Twitter based on the given hashtags. TweetBackend is responsible for the integration of all the different components. 
+
+During the design of modules we have incorporated many design patterns.
+\begin{itemize}
+\item Interaction between HashTagGenerator and DataStorageReader is a better example of Observer pattern. $Tweet_Fetch$ module first calls the HashTagGenerator to generate hashtags and fetch the tweets related to those generated hashtag. Once this event is complete, it calls the DataStorageReader to store those generated tweets. Also we intended to use Observer pattern for interacting with the web interface. But it was not taken up due to priority given by sponsor.
+\item We made DataStorageReader class a singleton. We wanted a single point of communication for the database. All the different sub modules of $Tweet_Fetch$ should interact with database via a single object of DataStorageReader. By this we are avoiding multiple connections to the database as well.
+\item DataStorageReader class is a single interface for any communication regarding storage and reading of the data. This storage and reading can be done in two ways – Database or CSV. So DataStorageReader provides functionality to write/read to database and similarly write/read to csv file. But actual csv read and write is done by CSVFileReader. So DataStorageReder will pass on the information to CSVFileReader which will do the actual csv file writing and reading. Here we tried to incorporate Adapter pattern.
+\end{itemize} 
+
 
 \begin{figure}[h]
 \centering
@@ -77,10 +139,10 @@ DataStorageReader as outlined in figure 2, is a singleton class and is responsib
 \caption{High Level Design of Tweet Fetch Module}
 \end{figure}
 
-For security reasons, Sql parameters are encrypted and stored in configuration file. HashtagGenerator is responsible for generating the hashtags from the given user input using natural language processing. TweetFetch component will get the tweets from Twitter based on the given hashtags. TweetBackend is responsible for the integration of all the different components.
 
 \subsection{Tweet Analysis}
 Two main responsibilities of this module are: Read the tweets and Generate the metamodel. CSVFileToTweetVizModel as outlined in figure 3, will use Neo-CSV package of MOOSE to read the CSV file and further generate the metamodel. Metamodel has inter-related objects representing Tweet, Tweet-User, HashTag and SearchCategory. 
+
 
 \begin{figure}[h]
 \centering
@@ -89,102 +151,125 @@ Two main responsibilities of this module are: Read the tweets and Generate the m
 \end{figure}
 
 \subsection{Tweet Visualization}
-Multiple visualizations are generated representing the relationships between different objects of the metamodel. To achieve this, we have used RTView and Roassal class in Pharo/MOOSE.
+Multiple visualizations are generated representing the relationships between different objects of the metamodel. To achieve this, we have used RTView and Roassal package in Pharo/MOOSE. 
+
 
 \section{Project Plan}
-Project development was divided into five iterations. First sprint was utilized for understanding of requirements and analysis of tools; next 3 sprints were dedicated for development of the major technical components of product; and last sprint was allocated for integration, testing and documentation. Major step stones of the project can be described as - 
+Project development was divided into five iterations. First sprint was utilized for understanding of requirements and analysis of tools; next 3 sprints were dedicated for development of the major technical components of product; and last sprint was allocated for integration, testing and documentation. Sprint meeting was conducted on every alternate Saturday (end of every sprint), where sprint agendas were discussed/ demonstrated. Major milestones of the project can be described as - 
 \begin{enumerate}
-\item Sprint 1 (21 SEP 2015-05 OCT 2015): - On second Saturday of the 2-week sprint, the following agendas were accomplished:
+\item Sprint 1 (21 SEP 2015-04 OCT 2015): Understanding tools and requirements
 \begin{itemize}
-\item Demonstrate different tools mentioned in requirements as learned by team members.
-\item Participate in brainstorming session to further elaborate  the requirements of the project.  
+\item Demonstrate different tools mentioned in requirements as learned by team members. 
+\item Participate in brainstorming session to further elaborate the requirements of the project. 
 \end{itemize}
-\item Sprint 2 (05 OCT 2015-19 OCT 2015): - On second Saturday of the 2-week sprint, the following agendas were discussed/ demonstrated:
+
+\item Sprint 2 (05 OCT 2015-18 OCT 2015): Obtain user input in the form of a word or a sentence.
 \begin{itemize}
-\item Obtain user input in the form of a word or a sentence.
 \item Parse the user sentence to build hashtags.
 \item Fetch the tweets based on hashtags.
-\item Store the fetched tweets.
+\item Store the fetched tweets
 \end{itemize}
-After this sprint, the demo was presented in front of an external reviewer, Dr. Kevin Gary and the his inputs were used to make technical and procedural changes to our project.
+After this sprint, the demo was presented in front of an external reviewer, Dr. Kevin Gary and his inputs were used to make technical and procedural changes to our project.
 
-\item Sprint 3 (19 OCT 2015-02 NOV 2015): - On second Saturday of the 2-week sprint, the following agendas were discussed/ demonstrated:
+\item  Sprint 3 (19 OCT 2015-01 NOV 2015): Analysis of tweets
 \begin{itemize}
-\item Analyze the data to produce Tweet objects in Pharo.
-\item Analyze the data to produce Hashtag objects in Pharo.
+\item Analyze the data to produce Tweet objects in MOOSE
+\item Analyze the data to produce Hashtag objects in Pharo
 \item Analyze the data to produce User (Twitter handles) objects in Pharo.
-\item Analyze the data to produce Search Category (Application user input) objects in Pharo.
+\item Analyze the data to produce Search Category (Application user input) objects in Pharo
 \end{itemize}
 The working model will demonstrate meta-model containing several objects. These objects will be further used in Roassal library for the visualization thus offering user the opportunity to review the topics of visualization.
-\item Sprint 4 (02 NOV 2015-16 NOV 2015): - On second Saturday of the 2-week sprint, the following agendas were discussed/ demonstrated:
+
+\item Sprint 4 (02 NOV 2015-15 NOV 2015): Visualization of meta-model
 \begin{itemize}
-\item Visualize Hashtag tree relationship.
-\item Visualize Hashtag and Tweet words cloud relationship.
-\item Visualize User, Tweet and hashtag organization chart relationship.
-\item Visualize User and Tweet connection circle relationship.
-\item Visualize tweet messages of different tweets.
+\item Visualize Hashtag tree relationship. 
+
+\item Visualize Hashtag and Tweet words cloud relationship. 
+
+\item Visualize User, Tweet and hashtag organization chart relationship. 
+
+\item Visualize User and Tweet connection circle relationship. 
+
+\item Visualize tweet messages of different tweets. 
 \end{itemize}
-The demo will present different visualization based on generated meta-model. There are several different types of Smart-arts and chats presented to demonstrate the wide range of visualization power of Roassal library in Pharo.
-\item Sprint 5 (16 NOV 2015-23 NOV 2015) – On second Saturday of the 2-week sprint, the following agendas were discussed/ demonstrated:
+The demo will present different visualization based on generated meta-model. There are several different types of Smart-arts and charts presented to demonstrate the wide range of visualization power of Roassal library in Pharo. 
+
+\item Sprint 5 (16 NOV 2015-23 NOV 2015): Regression
 \begin{itemize}
 \item Integrate all the modules of the product.
 \item Complete documentation related to product and project.
-\item Full system run from user input to final visualization
+\item Full system run from user input to final visualization.
 \end{itemize}
 The focus of this sprint was on the integration of separate modules and testing the code in parts and in full. The system needed to perform flawlessly.
-
 \end{enumerate}
 
+
+
 \section{Management Plan}
-We followed Agile work environment with two weeks of sprint duration and conducted stand-up meetings on every alternate day. For every sprint meeting, the first half was dedicated to sprint review and second half of the meeting was reserved for sprint planning. Sprint review focused on the following points:
+We followed Agile work environment with two weeks of sprint duration and conducted stand-up meetings on every alternate day. For every sprint meeting, the first half was dedicated to sprint review and second half of the meeting was reserved for sprint planning. Sprint review focused on the following points: 
 \begin{itemize}
-\item Which tasks were left incomplete and the reasons behind them?
-\item What worked well for us? What did not worked well for us? What actions can we take to improve our process?
+\item Which tasks were left incomplete and the reasons behind them? 
+\item What worked well for us?
+\item What didn't worked well for us?
+\item What actions can we take to improve our process?
 \end{itemize}
-In the sprint planning, following things were discussed:
+
+In the sprint planning, following things were discussed: 
 \begin{itemize}
 \item Objective of the new sprint.
-\item Any new user stories or any change to the priority of the user stories in product backlog?
-\item Which users stories needed to be moved from product backlog to sprint backlog?
-\item Allocation of tasks and roles of different team members.
+\item Any new user stories or any change to the priority of the user stories 
+in product backlog?
+\item  Which users stories needed to be moved from product backlog to sprint backlog? 
+\item Allocation of tasks and roles of different team members (tester/developer/product owner)
+
 \end{itemize}
+ 
+Three questions answered by each team member in the daily stand-up meeting were 
+\begin{enumerate}
+\item What did I do?
+\item What I will be doing till next meeting? 
+\item Is there any issue which team must know OR Is there any help needed from the team? 
+\end{enumerate}
 
-Three questions answered by each team member in the daily stand-up meeting were 1) What did I do? 2) What I will be doing till next meeting? 3) Is there any issue which team must know OR Is there any help needed from the team? 
+Two tools helped us monitor the whole process - Taiga\cite{TaigaSite} and Google Site\cite{GoogleSite}. Taiga was used as our visual management board that helped us to keep record of the product backlogs(figure 4) and sprint backlogs (figure 3). 
 
-Two tools helped us monitor the whole process - Taiga and Google Site. Taiga was used as our visual management board that helped us to keep record of the product backlogs(figure 4) and sprint backlogs (figure 3).
+Once the user story has been moved from the product backlog to the sprint backlog, the state of the tasks of user stories can be monitored during that sprint as: New, In progress, Testing or Completed. Each user stories were provided with unique ID for traceability and a point (5, 10, 15) based system for prioritization. User stories or tasks were also provided with a unit test/ developer integration test (figure 6). 
 
-Once the user story has been moved from the product backlog to the sprint backlog, the state of the tasks of user stories can be monitored during that sprint as: New, In progress, Testing or Completed.
+For any task that did not involve coding, a knowledge base document was written to explain the final outcome of the task. For example, our first sprint mostly consisted of the tasks that involved learning new platforms like MOOSE, PHARO, etc. In this case, a document was prepared explaining the concepts learned and shared with the team. Issues were logged in the Taiga’s issue tracker tool. 
+
+Google site\cite{GoogleSite} was a bird eye view of what was going on in the team. Every sprint and stand-up meeting details were recorded, including date of the meeting and important points discussed. Documents related to the process and product were placed in the wiki section of the site. 
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=6cm, height=6cm]{Backlog.jpg}
-\caption{Product backlogs in Taiga}
+\includegraphics[height=11cm]{Backlog.png}
+\caption{Product backlogs in Taiga\cite{TaigaSite}}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=6cm, height=6cm]{SprintBoard.jpg}
-\caption{Virtual Sprint Board in Taiga}
+\includegraphics[height=11cm]{SprintBoard.jpg}
+\caption{Virtual Sprint Board in Taiga\cite{TaigaSite}}
 \end{figure}
 
-Each user story was provided with unique ID for traceability and a point (5, 10, 15) based system for prioritization. Every user story or task was also provided with an acceptance test(figure 6).
+There were two scheduled reviews for Quality Assurance. These reviews were performed by Dr. Kevin Gary after sprint 2 and sprint 5. The feedback after first review were: 1) User stories are not formed correctly - This should be the place holder for the conversation with the customer. 2) Many of the tasks were being closed nearing the end of the sprint. Both of these points were taken into account and further improved on. 
 
-For any task that did not involve coding, a knowledge base document was written to explain the final outcome of the task. For example, our first sprint mostly consisted of the tasks that involved learning new platforms like MOOSE, PHARO, etc. In this case, a document was prepared explaining the concepts learned and shared with the team. Issues were logged in the Taigas issue tracker tool. 
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=6cm, height=6cm]{TaskInfo.jpg}
-\caption{Task information in Taiga }
+\includegraphics[width=10cm, height=10cm]{TaskInfo.jpg}
+\caption{Task information in Taiga\cite{TaigaSite} }
 \end{figure}
 
-Google site was a bird eye view of what was going on in the team. Every sprint and stand-up meeting details were recorded, including time of the meeting and important points discussed. Documents related to the process and product were placed in the wiki section of the site. Google Site proved to be a great tool for tracking the progress of the project and the artifacts being produced by the team.
-
-There were two scheduled reviews for Quality Assurance. These reviews were performed by Dr. Kevin Gary after sprint 2 and sprint 5. The feedback after first review were: 1) User stories are not formed correctly - This should be the place holder for the conversation with the customer. 2) Many of the tasks were being closed  nearing the end of the sprint. Both of these points were taken into account and further improved on.
 
 \section{Implementation}
-As mentioned in the architecture, there are three main modules in this product. Tweet Fetch, Tweet Analysis and Tweet Visualization. 
+As mentioned in the architecture, there are three main modules in this product.
+\begin{itemize}
+\item Tweet Fetch
+\item Tweet Analysis
+\item Tweet Visualization
+\end{itemize}
 
-Tweet Fetch module was completely developed using python. Various packages used for implementation are:
+Tweet Fetch module (Figure 7) was completely developed using python. Various packages used for implementation are:
 \begin{itemize}
 \item Tweepy - Fetch tweets from Twitter.
 \item Mysql Connector - Interact with MySQL database.
@@ -202,42 +287,42 @@ Best coding practices including naming conventions for variables, functions, fil
 
 Tweet Analysis and Tweet Fetch modules were developed in SmallTalk based Pharo platform. Pharo and MOOSE has inbuilt source control. All the packages created in the "package-cache" folder of MOOSE were also checked into Git with proper comments.
 
-Visualizations developed during the course of our implementation
+Visualizations developed during the course of our implementation are
 
 \begin{enumerate}
-\item Given a set of tweets based on a search category, we are able to get the hashtag's relationship. Initial aqua color ellipse in the figure 8, is user input whereas purple ellipses are the hashtags generated from the user input and red color boxes represent the next level of hashtags.
+\item Given a set of tweets based on a search category, we are able to get the hashtag's relationship. This is an important part of the vision. Here we are developing a tree like relationship of hashtags and finally identifying important hashtags relating to the input provided by user. Initial aqua color ellipse in the figure 8, is user input whereas purple ellipses are the hashtags generated from the user input and red color boxes represent the next level of hashtags.
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth, height=2cm]{JustHashTags.jpg}
+\includegraphics[width=\textwidth, height=8cm]{JustHashTags.jpg}
 \caption{Hashtag relationship}
 \end{figure}
-\item Once the hashtag's relationship has been generated, the tweets were added in the visualization. In figure 9, green color ellipses in the outer circumference represents the tweets. Blue color ellipse is the main hashtag whereas red color boxes are sub hashtags. Size of the red color boxes depends on the number of tweets associated with that hashtag.
+\item Once the hashtag's relationship has been generated, the tweets were added in the visualization. In this visualization we are trying to group the tweets into different hashtags. As we identified the prominent hashtags, by associating the tweets to them are trying to identify those tweets which are more relevant. In figure 9, green color ellipses in the outer circumference represents the tweets. Blue color ellipse is the main hashtag whereas red color boxes are sub hashtags. Size of the red color boxes depends on the number of tweets associated with that hashtag.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5cm, height=5cm]{HashtagToTweets.jpg}
+\includegraphics[width=10cm, height=10cm]{HashtagToTweets.png}
 \caption{Tweet - hashtag relation}
 \end{figure}
 
-\item In figure 10, we have generated visualization based on users and their tweets. Here purple ellipses are users and red color boxes are tweets. Size of ellipse is dependent on the number of tweets by that user. Initially, users and tweets are displayed separately. Once the "connect" Button clicked(figure 11), all the tweets tweeted by a user will come together and circle around that user.
+\item In figure 10, we have generated visualization based on users and their tweets. Here idea is to identify most popular users who have more tweets related to the given user topic. Here purple ellipses are users and red color boxes are tweets. Size of ellipse is dependent on the number of tweets by that user. Initially, users and tweets are displayed separately. Once the "connect" Button clicked(figure 11), all the tweets tweeted by a user will come together and circle around that user.
 \begin{figure}
 \centering
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=.6\linewidth]{UserTweet1.jpg}
+\includegraphics[width=.8\linewidth]{UserTweet1.jpg}
   \caption{User and tweets}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=.6\linewidth]{UserTweet2.jpg}
+\includegraphics[width=.8\linewidth]{UserTweet2.jpg}
   \caption{Connected User and tweets}
 \end{minipage}
 \end{figure}
 
-\item Popularity of a hashtag in terms of simple graphs(Figure 12).
+\item Popularity of a hashtag in terms of simple graphs(Figure 12). This gives simple understanding of which hashtags are popular based on the tweets associated under that hashtags.
 \begin{figure}[h]
 \centering
-\includegraphics[width=6cm, height=6cm]{Graph.jpg}
+\includegraphics[width=8cm, height=8cm]{Graph.jpg}
 \caption{Popularity of tweets}
 \end{figure}
 
@@ -245,12 +330,21 @@ Visualizations developed during the course of our implementation
 \end{enumerate}
 
 \section{Validation and Verification}
-Taiga was the tool used to report and track any issues during the time of product development.
+We have put more emphasis on verification then validation, which in future we would like to change and give equal importance to the validation part of the project. As part of verification we had unit test cases, developer and system integration test cases and finally regression test cases. As part of validation we had acceptance test cases. Validation was performed by manual inspection were visual patterns were matched to the speculated results of small number of tweets. To specify some, we visited the tweeter's profile to check if he/she is actually relatively influential by analyzing retweet for his/her other tweets. Similar approach was followed for validating popularity of hashtags.
+
+Further for validation, we have created a survey, where participants were chosen randomly, making sure no one was the stakeholder of the project. We have evaluated the responses from 20 participants as our initial validation process. Survey was conducted for Figure 8, Figure 9 and Figure 11; asking participants 1)The level of understanding of the visualization, 2) Can they identify the most prominent part of the visualization 3) How can we change the visualization to be more intuitive. The results relating to Figure 8 indicated that nearly 50\% of the users found it difficult to interpret the visualization. One of the reason is the disassociation of the visualization to the regular twitter use. Visualization of Figure 8 presented the flow of hashtags which did not directly relate to how twitter is used by an individual. This visualization was important for the project, as it was building block for our vision and led to more advanced visualizations as we progressed in the project.
+
+The second visualization(Figure 9), which depicts a direct relationship between the hashtag and tweets showed a more positive understanding among the users. The reason for more positive response was the different layers in visualization, more color coding and the lines connecting between layers were not intersecting. Thus making it easy for the users to understand the figure at first glance.
+ 
+The final visualization(Figure 10 and Figure 11) displayed the most positive result among the three visualizations. More than half of the users reported it to be easy(30\%) or very easy(30\%) to grasp. Our hypothesis says that the ease of understanding of Figure 11 is due to to the reason that this was the most relatable visualization from a user point of view. It was the relationship between twitter user and the tweets, which directly coincides with the basic understanding of twitter. 
+
+
+Taiga\cite{TaigaSite} was the tool used to report and track any issues during the time of product development.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{Issues.jpg}
-\caption{Issues list in Taiga}
+\caption{Issues list in Taiga\cite{TaigaSite}}
 \end{figure}
 
 Every issue when being logged, has to mention the task under which this issue has occurred unless it was discovered during regression or system integration testing. Taiga gives the classification of issues as bug, question or enhancement. Apart from that, priority is provided as low, medium or high. It also classifies the bugs as severity:  minor, normal, important, critical or wish-list. Any issue can be in one of the stages: New, In-progress, Ready for test, Closed, Needs Info, Rejected, Postponed. 
@@ -258,51 +352,43 @@ Every issue when being logged, has to mention the task under which this issue ha
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{Issue2.jpg}
-\caption{Issue tracking in Taiga}
+\caption{Issue tracking in Taiga\cite{TaigaSite}}
 \end{figure}
 
-Three Amigos rule was followed while moving the task from In-Progress to Complete state, where three Amigos included developer, tester and requirement owner.
-
-
-Apart from the acceptance test, we also had Integration test cases and Regression test cases. Sprint 5 was dedicated for the integration and regression testing. 
+Three Amigos rule was followed while moving the task from In-Progress to Complete state, where three Amigos included developer, tester and requirement owner. Sprint 5 was dedicated for the integration and regression testing. 
 
 Based on the discussion with product owner, Hapao will be used as test coverage tool in the future.
 
 \section{Outcomes and lessons learned}
-After every sprint we conducted Retrospectives to judge and reflect on our progress so far. Some of the highlighted points of the project are mentioned below divided in the categories as they were discussed: -
+After every sprint we conducted Retrospectives to judge and reflect on our progress so far. Some of the highlighted points of the project are mentioned below divided in the categories as they were discussed: - 
 
-\textbf{What worked well for us?} 
+What worked well for us? 
 \begin{itemize}
-\item Agile process
-\item Pharo/ Roassal
-\item NTLK and Tweepy library
-\item Changing vision of Project
-\item Even work distribution
+\item Agile process - handling change
+\item Pharo/MOOSE Roassal
+\item Third party library usage - NTLK and Tweepy library
 \end{itemize}
 
-Our biggest accomplishment in this project was learning of the new tool - Pharo/Roassal and successfully implementing agile process for software development. As a team, we enjoyed working in Agile environment as it helped us distribute work evenly among team members and throughout the project. Also considering that a new tool had to be learned and implemented for this project, agile did not force us to master Pharo beforehand. In fact, we learned the tool as and when demanded by sprints and user stories. Agile was also helpful in accommodating our code with evolving requirements as updated by our sponsor thus providing us with the ability to start contributing to product development from the beginning. To accept hashtag and download tweets, we used pythons built in library that helped to automate the initial process, thus giving us enough time to learn and explore Roassal. Slowly as we learned Roassal better, this led to evolving vision of our project, which in turn was very well accommodated by Agile process.
+Our biggest accomplishment in this project was learning of the new tool - Pharo/Roassal and the whole learning process was made easy by Agile process. Agile did not force us to master Pharo beforehand, in fact we learned the tool as and when demanded by sprints and user stories. Agile was also helpful in accommodating our code with evolving requirements thus providing us with the ability to start contributing to product development from the beginning. For example we started writing code to download tweets using hashtags without knowledge of what kind of visualizations it could lead to.
 
-\textbf{What did not work well for us?} 
 
+What did not work well for us? 
 \begin{itemize}
-\item Could not exploit all the features of Roassal
+\item Slow learning curve of new tool is hindering the capability to create powerful/ more meaningful visualizations
 \item Unequal commitment of team members
-\item Changing vision of Project
+\item Evolving vision of Project
 \end{itemize}
+ 
+Since Pharo/Rossal is a very new development tool, finding an online community was difficult. It made the learning process harder and thus more time was spent on learning the tool rather than testing its limits to achieve better visualizations. We used the examples mentioned in Roassal library for better understanding and went beyond the examples to create new and vivid visualizations. This process led to several visualizations which were not necessarily required or aligned to our vision but, helped us understand the tool better\cite{GoogleSite}. Lack of clear understanding of initial requirements lead to some extra coding work that could have been avoided. For example, we focused on User Interface for the initial sprints but later it was determined that it was not required. 
 
-Since Pharo/Rossal is a very new development tool, finding an online community was difficult. It made the learning process harder and thus more time was spent on learning the tool rather than testing its limits to achieve better visualizations. We used the examples mentioned in Roassal library for better understanding and went beyond the examples to create new and vivid visualizations. This process led to several visualizations which were not necessarily required but, it helped us understand the tool better and clarify our vision for the project. Lack of clear understanding of initial requirements lead to some extra coding work that could have been avoided. For example, we focused on User Interface for the initial sprints but later it was determined that it was not required. Similarly, in the first few sprints more importance was given to learning of tools, which resulted in development of features which were not aligned to vision of the product.
-
-\textbf{What actions can we take to improve our process going forward?} 
-
+What actions can we take to improve our process going forward? 
 \begin{itemize}
 \item Better implementation of Agile process 
-\item Automate unit tests
-\item Improve the task break down of an User Story
-\item Division of tasks among team members with in each user story rather than dividing complete user story among team members.
-\item Review the changes to vision in each sprint.
+\item Validation and automation of test cases
+\item Integrate visualization to realize complete vision in a single go
 \end{itemize}
 
-There was always room for us to improve on Agile process. For example, contrary to agile method we were more comfortable in assigning one user story to one team member rather than assigning individual tasks of user story to individual member and moving stories at constant pace. We were also unable to implement efficient daily stand-up meetings due to the schedule problems. We followed a Test Driven Development process where we spent a lot of time in checking our code manually after making any change. Automation of tests could not be implemented due to lack of time. 
+There was always room for us to improve on Agile process. For example, contrary to agile method we were more comfortable in assigning one user story to one team member rather than assigning individual tasks of a user story to individual member and moving stories at constant pace. We were also unable to implement efficient daily stand-up meetings due to the contrasting schedule of team members. We followed a Test Driven Development process where we spent a lot of time in checking our code manually after making any change. Automation of tests could not be implemented due to lack of time. Our concentration was mainly on the verification part rather than validation. This needs to change by effective utilization and community engagement for proper feedback. Finally we have different visualization trying to answer different parts of the vision, in future all these things has to be combined to produce a single visualization where all information can be gathered. 
 
 \section{Future Work, Acknowledgment and Conclusion}
 
@@ -350,6 +436,12 @@ Ian Sommerville
 \bibitem{SCOREwebsite}
 SCORE Agile Tweet Viz website
 \texttt{http://score-contest.org/2016/projects/tweetviz.php}
+\bibitem{GoogleSite}
+Project Google Site
+\texttt{https://sites.google.com/a/asu.edu/project-geeko/}
+\bibitem{TaigaSite}
+Taiga Virtual Visual Management
+\texttt{https://tree.taiga.io/project/ser515asu-agiletweetviz-geekoh/}
 \end{thebibliography}
 
 \end{document}
